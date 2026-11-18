@@ -13,6 +13,9 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.Instant;
 
 @Entity
 @Data
@@ -46,6 +49,10 @@ public class Task {
     @JoinColumn(name = "category_id")
     @Setter
     private Category category;
+
+    @CreationTimestamp
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private Instant createdAt;
 
     public Task(String title, User user, Category category) {
         this.title = title;

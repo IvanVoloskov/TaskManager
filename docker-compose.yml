@@ -13,3 +13,8 @@ services:
     container_name: taskmanager-redis
     ports:
       - "6379:6379"
+  kafka:
+    image: apache/kafka:3.9.0
+    container_name: taskmanager-kafka
+    ports:
+      - "9092:9092"

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.taskmanager.dto.UserDto;
 import ru.practicum.taskmanager.dto.UserResponse;
 import ru.practicum.taskmanager.exception.ConflictException;
@@ -18,12 +19,14 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserService {
 
     private final UserRepository userRepository;
     private final TaskRepository taskRepository;
     private final UserMapper userMapper;
 
+    @Transactional
     public UserResponse create(UserDto dto) {
         if (userRepository.existsByEmail(dto.email())) {
             throw new ConflictException("Пользователь с email " + dto.email() + " уже существует");
@@ -46,6 +49,7 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Пользователь с id=" + id + " не найден"));
     }
 
+    @Transactional
     @CacheEvict(cacheNames = "tasks", allEntries = true)
     public UserResponse update(Long id, UserDto dto) {
         User user = getEntity(id);
@@ -57,6 +61,7 @@ public class UserService {
         return userMapper.toResponse(userRepository.save(user));
     }
 
+    @Transactional
     @CacheEvict(cacheNames = "tasks", allEntries = true)
     public void delete(Long id) {
         getEntity(id);

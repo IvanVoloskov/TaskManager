@@ -3,9 +3,13 @@ package ru.practicum.taskmanager.mapper;
 import org.springframework.stereotype.Component;
 import ru.practicum.taskmanager.dto.TaskDto;
 import ru.practicum.taskmanager.dto.TaskResponse;
+import ru.practicum.taskmanager.event.TaskEvent;
+import ru.practicum.taskmanager.event.TaskEventType;
 import ru.practicum.taskmanager.model.Category;
 import ru.practicum.taskmanager.model.Task;
 import ru.practicum.taskmanager.model.User;
+
+import java.time.Instant;
 
 @Component
 public class TaskMapper {
@@ -38,6 +42,18 @@ public class TaskMapper {
                 task.getUser().getId(),
                 task.getUser().getName(),
                 task.getCategory().getId(),
-                task.getCategory().getName());
+                task.getCategory().getName(),
+                task.getCreatedAt());
+    }
+
+    public TaskEvent toEvent(Task task, TaskEventType type) {
+        return new TaskEvent(
+                type,
+                task.getId(),
+                task.getTitle(),
+                task.getStatus(),
+                task.getUser().getId(),
+                task.getCategory().getId(),
+                Instant.now());
     }
 }
