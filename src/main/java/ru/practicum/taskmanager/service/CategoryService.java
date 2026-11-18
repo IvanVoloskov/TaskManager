@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.taskmanager.dto.CategoryDto;
 import ru.practicum.taskmanager.dto.CategoryResponse;
 import ru.practicum.taskmanager.exception.ConflictException;
@@ -19,12 +20,14 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final TaskRepository taskRepository;
     private final CategoryMapper categoryMapper;
 
+    @Transactional
     @CacheEvict(cacheNames = {"categories", "tasks"}, allEntries = true)
     public CategoryResponse create(CategoryDto dto) {
         if (categoryRepository.existsByName(dto.name())) {
@@ -52,6 +55,7 @@ public class CategoryService {
                 .orElseThrow(() -> new NotFoundException("Категория с id=" + id + " не найдена"));
     }
 
+    @Transactional
     @CacheEvict(cacheNames = {"categories", "tasks"}, allEntries = true)
     public CategoryResponse update(Long id, CategoryDto dto) {
         Category category = getEntity(id);
@@ -63,6 +67,7 @@ public class CategoryService {
         return categoryMapper.toResponse(categoryRepository.save(category));
     }
 
+    @Transactional
     @CacheEvict(cacheNames = {"categories", "tasks"}, allEntries = true)
     public void delete(Long id) {
         getEntity(id);

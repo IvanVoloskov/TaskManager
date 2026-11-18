@@ -66,6 +66,12 @@ public class GlobalExceptionHandler {
         return build(HttpStatus.CONFLICT, "Конфликт данных в базе", request);
     }
 
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequestException ex, HttpServletRequest request) {
+        log.warn("Некорректный запрос: {}", ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+    }
+
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, HttpServletRequest request) {
         ErrorResponse body = new ErrorResponse(
                 LocalDateTime.now(), status.value(), status.getReasonPhrase(), message, request.getRequestURI());
