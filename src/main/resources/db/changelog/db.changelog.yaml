@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/changes/003-create-task.sql
   - include:
       file: db/changelog/changes/004-task-indexes.sql
+  - include:
+      file: db/changelog/changes/005-task-created-at.sql
